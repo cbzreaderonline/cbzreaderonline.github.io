@@ -1,0 +1,19 @@
+{
+  "name": "CBZ Reader Online",
+  "short_name": "CBZ Reader",
+  "description": "A fast, free, browser based CBZ and CBR comic reader that works offline and never uploads your files.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#E9E2CE",
+  "theme_color": "#0E7C86",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <pattern id="dots" width="6" height="6" patternUnits="userSpaceOnUse">
+      <circle cx="1.2" cy="1.2" r="1.2" fill="#ffffff" opacity="0.14"/>
+    </pattern>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="#0E7C86"/>
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="url(#dots)"/>
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="none" stroke="#161513" stroke-width="3"/>
+  <path d="M20 24h24l-6 8 6 8H20l6-8z" fill="#F4B400" stroke="#161513" stroke-width="2.4" stroke-linejoin="round"/>
+  <text x="32" y="41" font-family="Arial Black, Arial, sans-serif" font-size="17" font-weight="900" text-anchor="middle" fill="#161513">Z</text>
+</svg>

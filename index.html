@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CBZ Reader Online, the Free CBZ and CBR Comic Reader in Your Browser</title>
+<meta name="description" content="Open and read CBZ and CBR comic archives instantly in your browser. No install, no upload, and it works offline too. The free online CBZ reader for Windows, Mac, Linux, Chrome and Android.">
+<meta name="keywords" content="cbz reader, cbz reader online, best cbz reader, cbz reader windows, online cbz reader, linux cbz reader, cbz reader linux, cbz reader mac, best cbz reader android, cbr cbz reader, cbz reader android, portable cbz reader, best cbz reader for windows, cbr cbz reader windows, best cbz reader mac, cbz reader windows 10, chrome cbz reader, cbz reader chrome, cbz reader github, open source cbz reader, what is the best cbz reader">
+<meta name="robots" content="index, follow">
+<meta name="author" content="CBZ Reader Online">
+<link rel="canonical" href="https://cbzreaderonline.github.io/">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/favicon.svg">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#0E7C86">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="CBZ Reader Online">
+<meta property="og:title" content="CBZ Reader Online, the Free CBZ and CBR Comic Reader in Your Browser">
+<meta property="og:description" content="Open and read CBZ and CBR comic archives instantly in your browser. No install, no upload, and it works offline too. The free online CBZ reader for Windows, Mac, Linux, Chrome and Android.">
+<meta property="og:url" content="https://cbzreaderonline.github.io/">
+<meta property="og:image" content="https://cbzreaderonline.github.io/favicon.svg">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CBZ Reader Online, the Free CBZ and CBR Comic Reader in Your Browser">
+<meta name="twitter:description" content="Open and read CBZ and CBR comic archives instantly in your browser. No install, no upload, and it works offline too. The free online CBZ reader for Windows, Mac, Linux, Chrome and Android.">
+<meta name="twitter:image" content="https://cbzreaderonline.github.io/favicon.svg">
+<meta name="google-site-verification" content="-RL8kwQVVxo3hT4-ai8sJKdp8KojgsigE5F8InM8_pg" />
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-NBE67BSKEY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-NBE67BSKEY');
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+
+/* ---------------------------------------------------------
+   CBZ READER ONLINE design tokens
+--------------------------------------------------------- */
+:root{
+  --bg:#E9E2CE;
+  --surface:#FFFDF6;
+  --ink:#161513;
+  --ink-soft:#4a473e;
+  --line:#161513;
+  --accent:#0E7C86;      /* halftone teal */
+  --accent-2:#E6432E;    /* comic red */
+  --accent-3:#F4B400;    /* pop yellow */
+  --shadow: 6px 6px 0 rgba(22,21,19,0.9);
+  --radius: 14px;
+  --dot: rgba(22,21,19,0.10);
+  --maxw: 1180px;
+  color-scheme: light;
+}
+html[data-theme="dark"]{
+  --bg:#121214;
+  --surface:#1B1B1F;
+  --ink:#F2F1EA;
+  --ink-soft:#B7B4A9;
+  --line:#F2F1EA;
+  --accent:#37D6C4;
+  --accent-2:#FF6B5B;
+  --accent-3:#FFC94A;
+  --shadow: 6px 6px 0 rgba(0,0,0,0.6);
+  --dot: rgba(242,241,234,0.08);
+  color-scheme: dark;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Manrope',system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  transition:background .35s ease,color .35s ease;
+  overflow-x:hidden;
+}
+img{max-width:100%;display:block;}
+a{color:inherit;}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 20px;}
+.eyebrow{
+  font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;
+  font-weight:800;color:var(--accent);display:inline-flex;align-items:center;gap:8px;
+}
+.eyebrow::before{content:"";width:8px;height:8px;background:var(--accent-2);display:inline-block;border-radius:50%;box-shadow:0 0 0 3px var(--dot);}
+h1,h2,h3{font-family:'Bangers',cursive;letter-spacing:.02em;line-height:1;margin:0;font-weight:400;}
+h2{font-size:clamp(28px,5vw,44px);}
+h3{font-size:clamp(20px,3vw,26px);}
+p{line-height:1.65;color:var(--ink-soft);margin:0 0 14px;}
+.halftone{
+  position:absolute;inset:0;pointer-events:none;
+  background-image: radial-gradient(var(--dot) 1.4px, transparent 1.4px);
+  background-size: 14px 14px;
+  opacity:.7;
+}
+button{font-family:inherit;cursor:pointer;}
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--ink);color:var(--bg);
+  border:2px solid var(--line);
+  padding:13px 22px;border-radius:999px;
+  font-weight:800;font-size:15px;
+  box-shadow:var(--shadow);
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:9px 9px 0 rgba(0,0,0,.3);}
+.btn:active{transform:translate(0,0);box-shadow:2px 2px 0 rgba(0,0,0,.5);}
+.btn.ghost{background:transparent;color:var(--ink);}
+.btn.accent{background:var(--accent);color:#08201f;border-color:var(--line);}
+.btn svg{width:18px;height:18px;}
+
+/* ---------- Nav ---------- */
+header{
+  position:sticky;top:0;z-index:60;
+  backdrop-filter:blur(10px);
+  background:color-mix(in srgb, var(--bg) 82%, transparent);
+  border-bottom:2px solid var(--line);
+}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0;}
+.brand{display:flex;align-items:center;gap:10px;font-family:'Bangers';font-size:24px;letter-spacing:.03em;}
+.brand .mark{
+  width:36px;height:36px;border-radius:9px;background:var(--ink);color:var(--bg);
+  display:flex;align-items:center;justify-content:center;font-size:20px;border:2px solid var(--line);
+  transform:rotate(-6deg);
+}
+.navlinks{display:flex;gap:26px;align-items:center;font-weight:700;font-size:14.5px;}
+.navlinks a{text-decoration:none;opacity:.85;}
+.navlinks a:hover{opacity:1;text-decoration:underline;text-decoration-thickness:3px;text-decoration-color:var(--accent-2);text-underline-offset:5px;}
+#themeToggle{
+  width:44px;height:44px;border-radius:50%;border:2px solid var(--line);background:var(--surface);
+  display:flex;align-items:center;justify-content:center;
+}
+#themeToggle svg{width:20px;height:20px;}
+.navBtnWrap{display:flex;gap:12px;align-items:center;}
+.burger{display:none;background:none;border:2px solid var(--line);border-radius:10px;width:44px;height:44px;align-items:center;justify-content:center;}
+.burger svg{width:22px;height:22px;}
+
+/* ---------- Hero ---------- */
+.hero{position:relative;padding:64px 0 40px;overflow:hidden;}
+.hero-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:center;}
+.hero h1{font-size:clamp(40px,6.4vw,74px);margin:14px 0 18px;}
+.hero h1 .pop{color:var(--accent-2);-webkit-text-stroke:2px var(--line);}
+.hero p.lead{font-size:17.5px;max-width:520px;}
+.hero-ctas{display:flex;gap:14px;margin-top:22px;flex-wrap:wrap;}
+.trust{display:flex;gap:22px;margin-top:28px;flex-wrap:wrap;}
+.trust div{display:flex;align-items:center;gap:8px;font-weight:700;font-size:13.5px;color:var(--ink-soft);}
+.trust svg{width:18px;height:18px;color:var(--accent);}
+
+/* Comic panel drop-zone (signature element) */
+.panel{
+  position:relative;background:var(--surface);
+  border:3px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:26px;
+}
+.panel .halftone{border-radius:var(--radius);}
+.dropzone{
+  position:relative;z-index:2;
+  border:3px dashed var(--line);border-radius:10px;
+  padding:38px 18px;text-align:center;
+  transition:background .2s ease, transform .2s ease;
+  background:color-mix(in srgb, var(--surface) 70%, transparent);
+}
+.dropzone.drag{background:var(--accent-3);transform:scale(1.015);}
+.dropzone svg{width:46px;height:46px;color:var(--accent-2);margin-bottom:10px;}
+.dropzone h3{margin-bottom:6px;}
+.dropzone small{color:var(--ink-soft);font-weight:600;display:block;margin-top:8px;}
+.dropzone input{display:none;}
+.speech{
+  position:absolute;top:-18px;right:-14px;background:var(--accent-3);color:#20180a;
+  border:2px solid var(--line);border-radius:50% 50% 50% 4px;
+  padding:9px 12px;font-family:'Bangers';font-size:15px;transform:rotate(6deg);
+  box-shadow:3px 3px 0 rgba(0,0,0,.3);z-index:3;
+}
+
+/* ---------- Sections shared ---------- */
+section{padding:70px 0;position:relative;}
+.section-head{max-width:640px;margin:0 auto 40px;text-align:center;}
+.section-head h2{margin-top:10px;}
+.section-head p{margin:14px auto 0;}
+
+/* ---------- Features ---------- */
+.features{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+.fcard{
+  background:var(--surface);border:2.5px solid var(--line);border-radius:var(--radius);
+  padding:24px;box-shadow:var(--shadow);position:relative;overflow:hidden;
+  transition:transform .2s ease;
+}
+.fcard:hover{transform:translateY(-4px);}
+.fcard .ic{
+  width:46px;height:46px;border-radius:11px;background:var(--ink);color:var(--bg);
+  display:flex;align-items:center;justify-content:center;margin-bottom:14px;
+}
+.fcard .ic svg{width:24px;height:24px;}
+.fcard h3{font-size:20px;margin-bottom:8px;}
+.fcard p{margin:0;font-size:14.5px;}
+.tag-num{position:absolute;top:14px;right:18px;font-family:'Bangers';font-size:30px;color:var(--dot);}
+
+/* ---------- Viewer / Demo ---------- */
+.viewer-shell{
+  background:var(--ink);color:var(--bg);border-radius:18px;border:3px solid var(--line);
+  overflow:hidden;box-shadow:var(--shadow);
+}
+.viewer-top{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:2px solid rgba(255,255,255,.12);flex-wrap:wrap;gap:10px;}
+.viewer-top .fname{font-weight:800;font-size:14px;opacity:.85;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px;}
+.viewer-controls{display:flex;gap:8px;flex-wrap:wrap;}
+.vbtn{
+  background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.25);color:inherit;
+  border-radius:8px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;
+}
+.vbtn svg{width:18px;height:18px;}
+.vbtn:hover{background:rgba(255,255,255,.18);}
+.vbtn.active{background:var(--accent);border-color:var(--accent);color:#0a1f1d;}
+.viewer-stage{
+  min-height:340px;display:flex;align-items:center;justify-content:center;position:relative;
+  background:repeating-linear-gradient(45deg, rgba(255,255,255,.02) 0 10px, transparent 10px 20px);
+  padding:18px;
+}
+.viewer-stage img{max-height:70vh;border-radius:6px;box-shadow:0 10px 40px rgba(0,0,0,.5);}
+.viewer-empty{text-align:center;color:rgba(255,255,255,.55);padding:40px 20px;}
+.viewer-empty svg{width:52px;height:52px;margin-bottom:14px;opacity:.6;}
+.viewer-bottom{display:flex;align-items:center;gap:14px;padding:12px 18px;border-top:2px solid rgba(255,255,255,.12);}
+.viewer-bottom input[type=range]{flex:1;accent-color:var(--accent);}
+.pagecount{font-size:13px;font-weight:700;opacity:.8;min-width:70px;text-align:right;}
+.thumbstrip{display:flex;gap:8px;overflow-x:auto;padding:10px 18px;border-top:2px solid rgba(255,255,255,.12);}
+.thumbstrip img{height:64px;border-radius:4px;border:2px solid transparent;cursor:pointer;opacity:.6;flex:none;}
+.thumbstrip img.active{opacity:1;border-color:var(--accent);}
+
+/* ---------- Platforms ---------- */
+.platforms{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;}
+.pcard{
+  background:var(--surface);border:2.5px solid var(--line);border-radius:12px;padding:18px 14px;text-align:center;
+  box-shadow:4px 4px 0 rgba(22,21,19,.6);
+}
+html[data-theme="dark"] .pcard{box-shadow:4px 4px 0 rgba(0,0,0,.5);}
+.pcard svg{width:30px;height:30px;margin:0 auto 10px;color:var(--accent);}
+.pcard b{display:block;font-size:14px;}
+.pcard span{font-size:12px;color:var(--ink-soft);}
+
+/* ---------- About ---------- */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:start;}
+.about-grid .panel{padding:22px;}
+.stat-row{display:flex;gap:26px;margin-top:24px;flex-wrap:wrap;}
+.stat{border-left:3px solid var(--accent-2);padding-left:12px;}
+.stat b{font-family:'Bangers';font-size:28px;display:block;}
+.stat span{font-size:12.5px;color:var(--ink-soft);font-weight:700;}
+
+/* ---------- FAQ ---------- */
+.faq-list{max-width:840px;margin:0 auto;display:flex;flex-direction:column;gap:12px;}
+.faq-item{
+  background:var(--surface);border:2.5px solid var(--line);border-radius:12px;
+  overflow:hidden;box-shadow:3px 3px 0 rgba(22,21,19,.5);
+}
+html[data-theme="dark"] .faq-item{box-shadow:3px 3px 0 rgba(0,0,0,.5);}
+.faq-q{
+  width:100%;text-align:left;background:none;border:none;color:var(--ink);
+  padding:18px 20px;display:flex;justify-content:space-between;align-items:center;gap:14px;
+  font-weight:800;font-size:15.5px;
+}
+.faq-q svg{width:20px;height:20px;flex:none;transition:transform .25s ease;color:var(--accent-2);}
+.faq-item.open .faq-q svg{transform:rotate(45deg);}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease;}
+.faq-a p{padding:0 20px 18px;margin:0;font-size:14.5px;}
+
+/* ---------- Footer ---------- */
+footer{border-top:2px solid var(--line);padding:36px 0;}
+.foot-grid{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
+.foot-links{display:flex;gap:20px;font-size:13.5px;font-weight:700;flex-wrap:wrap;}
+.foot-links a{text-decoration:none;opacity:.8;}
+.foot-links a:hover{opacity:1;text-decoration:underline;}
+.foot-note{font-size:12.5px;color:var(--ink-soft);}
+
+/* ---------- Toast ---------- */
+#toast{
+  position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(120%);
+  background:var(--ink);color:var(--bg);padding:12px 20px;border-radius:999px;
+  font-weight:700;font-size:14px;z-index:200;border:2px solid var(--line);
+  box-shadow:0 8px 20px rgba(0,0,0,.3);transition:transform .3s ease;
+}
+#toast.show{transform:translateX(-50%) translateY(0);}
+
+/* reduced motion */
+@media (prefers-reduced-motion: reduce){
+  *{animation:none !important;transition:none !important;}
+}
+
+/* fade-up reveal */
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease, transform .6s ease;}
+.reveal.in{opacity:1;transform:translateY(0);}
+
+/* ---------- Responsive ---------- */
+@media (max-width:980px){
+  .hero-grid{grid-template-columns:1fr;}
+  .features{grid-template-columns:repeat(2,1fr);}
+  .platforms{grid-template-columns:repeat(3,1fr);}
+  .about-grid{grid-template-columns:1fr;}
+}
+@media (max-width:640px){
+  .navlinks{position:fixed;top:70px;left:0;right:0;background:var(--bg);border-bottom:2px solid var(--line);
+    flex-direction:column;padding:18px 20px;gap:16px;transform:translateY(-130%);transition:transform .3s ease;z-index:50;}
+  .navlinks.open{transform:translateY(0);}
+  .burger{display:flex;}
+  .features{grid-template-columns:1fr;}
+  .platforms{grid-template-columns:repeat(2,1fr);}
+  .hero{padding:40px 0 24px;}
+  .hero-ctas{flex-direction:column;align-items:stretch;}
+  .hero-ctas .btn{justify-content:center;}
+  .viewer-controls{justify-content:center;width:100%;}
+  .viewer-top{justify-content:center;text-align:center;}
+  .viewer-top .fname{max-width:100%;}
+}
+
+
+.page-hero{padding:54px 0 20px;}
+.page-hero h1{font-size:clamp(34px,6vw,54px);margin:14px 0 10px;}
+.updated{font-size:13px;font-weight:700;color:var(--ink-soft);}
+.prose{max-width:760px;margin:0 auto;padding:10px 0 60px;}
+.prose h2{font-family:'Bangers';font-size:26px;margin:36px 0 12px;letter-spacing:.02em;}
+.prose h3{font-family:'Manrope';font-size:18px;font-weight:800;margin:22px 0 8px;color:var(--ink);}
+.prose p{font-size:15.5px;line-height:1.75;}
+.prose ul{color:var(--ink-soft);line-height:1.8;font-size:15.5px;padding-left:20px;}
+.prose li{margin-bottom:6px;}
+.prose a{color:var(--accent);font-weight:700;text-decoration:underline;text-decoration-color:var(--accent-2);text-underline-offset:3px;}
+.callout{
+  background:var(--surface);border:2.5px solid var(--line);border-radius:12px;
+  padding:18px 20px;box-shadow:4px 4px 0 rgba(22,21,19,.5);margin:22px 0;
+}
+html[data-theme="dark"] .callout{box-shadow:4px 4px 0 rgba(0,0,0,.5);}
+.errorpage{min-height:70vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:60px 20px;}
+.errorpage .code{font-family:'Bangers';font-size:clamp(90px,20vw,160px);line-height:1;color:var(--accent-2);-webkit-text-stroke:3px var(--line);}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:30px;max-width:900px;margin:0 auto;}
+.contact-card{background:var(--surface);border:3px solid var(--line);border-radius:14px;padding:26px;box-shadow:var(--shadow);}
+.contact-card h3{margin-bottom:10px;}
+.contact-card a.email{font-weight:800;color:var(--accent);word-break:break-all;}
+.steps{counter-reset:step;list-style:none;padding-left:0;}
+.steps li{counter-increment:step;position:relative;padding-left:40px;margin-bottom:16px;font-size:15.5px;color:var(--ink-soft);line-height:1.7;}
+.steps li::before{content:counter(step);position:absolute;left:0;top:0;width:26px;height:26px;border-radius:50%;background:var(--ink);color:var(--bg);font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;font-family:'Manrope';}
+@media (max-width:640px){.contact-grid{grid-template-columns:1fr;}}
+
+.vbtn.active#spreadBtn{font-weight:800;}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "CBZ Reader Online",
+  "url": "https://cbzreaderonline.github.io/",
+  "applicationCategory": "Utility",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "description": "A free browser based CBZ and CBR comic reader that works offline and never uploads your files to a server.",
+  "featureList": "CBZ reading, offline support, dark mode, light mode, page thumbnails, two page spread mode"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type": "Question", "name": "What is the best CBZ reader?", "acceptedAnswer": {"@type": "Answer", "text": "The best CBZ reader is one that opens your file instantly without an install, an account, or an upload delay, which is what CBZ Reader Online is built to do."}},
+    {"@type": "Question", "name": "What is a CBZ file?", "acceptedAnswer": {"@type": "Answer", "text": "A CBZ file is a ZIP archive containing a sequence of image pages used to store digital comics and manga."}},
+    {"@type": "Question", "name": "Is my comic file uploaded to a server?", "acceptedAnswer": {"@type": "Answer", "text": "No, the file is processed entirely inside your browser and is never uploaded anywhere."}}
+  ]
+}
+</script>
+</head>
+<body>
+<div id="toast"></div>
+<header>
+  <div class="wrap nav">
+    <a href="/" style="text-decoration:none;color:inherit;"><div class="brand"><span class="mark">Z</span> CBZ Reader<span style="color:var(--accent-2)">.</span></div></a>
+    <nav class="navlinks" id="navlinks">
+      <a href="/#reader" style="text-decoration:underline;text-decoration-color:var(--accent-2);text-underline-offset:5px;">Reader</a>
+      <a href="/#features">Features</a>
+      <a href="/about.html">About</a>
+      <a href="/#faq">FAQ</a>
+      <a href="/contact.html">Contact</a>
+    </nav>
+    <div class="navBtnWrap">
+      <button id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark and light mode"></button>
+      <button class="burger" id="burgerBtn" aria-label="Open menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+
+<div id="toast"></div>
+
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="halftone" style="opacity:.35"></div>
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow">100% free · runs in your browser</span>
+        <h1>The <span class="pop">CBZ reader</span><br>that just opens comics.</h1>
+        <p class="lead">Drop a .cbz or .cbr file and start reading in under a second, no install, no sign-up, no upload to a server. It works on Windows, Mac, Linux, Chrome, and Android, right inside this tab.</p>
+        <div class="hero-ctas">
+          <a href="#reader" class="btn accent">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 4v12m0 0l-4-4m4 4l4-4"/><path d="M4 18v1a2 2 0 002 2h12a2 2 0 002-2v-1"/></svg>
+            Open a comic now
+          </a>
+          <a href="#features" class="btn ghost">See features</a>
+        </div>
+        <div class="trust">
+          <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg> No file leaves your device</div>
+          <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/></svg> Open source friendly</div>
+          <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/></svg> Fast local unzip</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="halftone"></div>
+        <span class="speech">POW!</span>
+        <div class="dropzone" id="heroDropzone" style="position:relative;z-index:2;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 16V4m0 0L7 9m5-5l5 5"/><rect x="3" y="16" width="18" height="5" rx="2"/></svg>
+          <h3>Drop your .cbz / .cbr here</h3>
+          <p style="margin:0;">or click to browse your files</p>
+          <small>Everything is processed locally in your browser tab.</small>
+          <input type="file" id="heroFileInput" accept=".cbz,.cbr,.zip,.rar">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- READER -->
+  <section id="reader">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Online CBZ reader</span>
+        <h2>Read it right here, right now.</h2>
+        <p>Load a comic and page through it with the same viewer real people use every day, fit-width, fit-height, two-page spreads, thumbnails, and full keyboard control.</p>
+      </div>
+
+      <div class="viewer-shell reveal">
+        <div class="viewer-top">
+          <span class="fname" id="fname">No file loaded</span>
+          <div class="viewer-controls">
+            <button class="vbtn" id="prevBtn" title="Previous page (←)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <button class="vbtn" id="nextBtn" title="Next page (→)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg></button>
+            <button class="vbtn active" id="fitWidthBtn" title="Fit width">W</button>
+            <button class="vbtn" id="fitHeightBtn" title="Fit height">H</button>
+            <button class="vbtn" id="spreadBtn" title="Two page spread">2P</button>
+            <button class="vbtn" id="fullscreenBtn" title="Fullscreen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 9V5a1 1 0 011-1h4M20 9V5a1 1 0 00-1-1h-4M4 15v4a1 1 0 001 1h4M20 15v4a1 1 0 01-1 1h-4"/></svg></button>
+            <button class="vbtn" id="openBtn" title="Open a file"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 4h16v16H4z" opacity="0"/><path d="M3 7l2-3h4l2 3h10v11a1 1 0 01-1 1H4a1 1 0 01-1-1V7z"/></svg></button>
+            <input type="file" id="mainFileInput" accept=".cbz,.cbr,.zip,.rar" style="display:none;">
+          </div>
+        </div>
+        <div class="viewer-stage" id="stage">
+          <div class="viewer-empty" id="emptyState">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+            <div>Open a .cbz file above to start reading</div>
+          </div>
+          <img id="pageImg" style="display:none;" alt="Comic page">
+        </div>
+        <div class="viewer-bottom">
+          <button class="vbtn" id="scrubPrev" title="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <input type="range" id="pageSlider" min="0" max="0" value="0" disabled>
+          <button class="vbtn" id="scrubNext" title="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg></button>
+          <span class="pagecount" id="pageCount">0 / 0</span>
+        </div>
+        <div class="thumbstrip" id="thumbstrip"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Feature first</span>
+        <h2>Everything a comic reader needs.</h2>
+        <p>Built to be the best cbz reader for casual readers and archivists alike, on desktop or phone.</p>
+      </div>
+      <div class="features">
+
+        <div class="fcard reveal"><span class="tag-num">01</span>
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 4h16v16H4z"/><path d="M4 9h16M9 4v16"/></svg></div>
+          <h3>Instant local unzip</h3>
+          <p>CBZ archives are unpacked directly in your browser using fast client-side extraction, no server round-trip, no waiting on uploads.</p>
+        </div>
+
+        <div class="fcard reveal"><span class="tag-num">02</span>
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg></div>
+          <h3>Privacy by design</h3>
+          <p>Your comics never leave your device. There's no upload step, so it works for private collections and on locked-down networks.</p>
+        </div>
+
+        <div class="fcard reveal"><span class="tag-num">03</span>
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
+          <h3>Fast on any machine</h3>
+          <p>Lightweight code with no bloated frameworks means pages decode and render quickly, even on older laptops or budget phones.</p>
+        </div>
+
+        <div class="fcard reveal"><span class="tag-num">04</span>
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="8" height="16" rx="1"/><rect x="13" y="4" width="8" height="16" rx="1"/></svg></div>
+          <h3>Single & spread view</h3>
+          <p>Switch between fit-width, fit-height, and page-by-page navigation to match how you like to read manga, comics, or scans.</p>
+        </div>
+
+        <div class="fcard reveal"><span class="tag-num">05</span>
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 5h16M4 12h10M4 19h7"/></svg></div>
+          <h3>Thumbnails & scrubbing</h3>
+          <p>Jump straight to any page with the thumbnail strip or the slider, instead of clicking next dozens of times.</p>
+        </div>
+
+        <div class="fcard reveal"><span class="tag-num">06</span>
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/></svg></div>
+          <h3>Cross platform</h3>
+          <p>It's a website, so it works the same on Windows, macOS, Linux, ChromeOS, and Android, no separate app to install per platform.</p>
+        </div>
+
+        <div class="fcard reveal"><span class="tag-num">07</span>
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M8 4l-6 8 6 8M16 4l6 8-6 8"/></svg></div>
+          <h3>Keyboard & touch friendly</h3>
+          <p>Use arrow keys on desktop or swipe and tap zones on mobile, built mobile-first, then layered up for larger screens.</p>
+        </div>
+
+        <div class="fcard reveal"><span class="tag-num">08</span>
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg></div>
+          <h3>Dark and light mode</h3>
+          <p>Read comfortably day or night. Theme preference is remembered automatically for your next visit.</p>
+        </div>
+
+        <div class="fcard reveal"><span class="tag-num">09</span>
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 6h16M4 6l2 14h12l2-14M9 10v6M15 10v6"/></svg></div>
+          <h3>No install, no clutter</h3>
+          <p>Nothing to download or uninstall later. Close the tab when you're done, there's no background process left running.</p>
+        </div>
+
+
+        <div class="fcard reveal"><span class="tag-num">10</span>
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/><path d="M12 6v6l4 2"/></svg></div>
+          <h3>Remembers your page</h3>
+          <p>Close the tab in the middle of a chapter and come back later. This reader quietly remembers the last page of the last file you opened, so you can pick up right where you stopped.</p>
+        </div>
+
+        <div class="fcard reveal"><span class="tag-num">11</span>
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12a7 7 0 0114 0M12 12v7"/><path d="M9 19h6"/></svg></div>
+          <h3>Works fully offline</h3>
+          <p>After your first visit, the app shell is cached on your device. You can reopen this page with no internet connection at all and it will still load and let you read local files.</p>
+        </div>
+
+        <div class="fcard reveal"><span class="tag-num">12</span>
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="5" width="8" height="14" rx="1"/><rect x="13" y="5" width="8" height="14" rx="1"/></svg></div>
+          <h3>Two page spread mode</h3>
+          <p>Prefer reading spreads the way they were drawn? Turn on two page view to see left and right pages together, just like an open physical comic.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLATFORMS -->
+  <section id="platforms">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Works everywhere</span>
+        <h2>One reader, every platform.</h2>
+        <p>Whether you searched for a cbz reader for Windows, a cbz reader for Linux, or the best cbz reader for Mac and Android, this is the same fast reader on all of them.</p>
+      </div>
+      <div class="platforms">
+        <div class="pcard reveal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="12" rx="1"/><path d="M8 20h8M12 16v4"/></svg><b>Windows</b><span>cbz reader windows 10/11</span></div>
+        <div class="pcard reveal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a5 5 0 015 5c0 3-2 4-2 7h-6c0-3-2-4-2-7a5 5 0 015-5z"/><path d="M8 17c0 3 2 5 4 5s4-2 4-5"/></svg><b>macOS</b><span>cbz reader mac</span></div>
+        <div class="pcard reveal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="9" r="4"/><path d="M6 21c1-4 4-5 6-5s5 1 6 5"/></svg><b>Linux</b><span>linux cbz reader</span></div>
+        <div class="pcard reveal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 19h2"/></svg><b>Android</b><span>cbz reader android</span></div>
+        <div class="pcard reveal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18a14 14 0 010-18z"/></svg><b>Chrome</b><span>chrome cbz reader</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="wrap about-grid">
+      <div class="reveal">
+        <span class="eyebrow">About the project</span>
+        <h2 style="margin-top:10px;">Comics deserve a reader that gets out of the way.</h2>
+        <p style="margin-top:18px;">CBZ Reader Online was built around one simple idea: opening a comic archive shouldn't require installing anything. A CBZ file is just a ZIP archive of image pages, and a CBR file is the same idea using RAR compression, so a well-built webpage can unpack and display them exactly as well as a native desktop application, without asking you to trust a download or wait for a server to finish uploading and converting your file.</p>
+        <p>This reader runs entirely on the device you're using right now. When you drop a .cbz file into the box above, your browser reads it, extracts the image pages using client-side unzip logic, sorts them naturally, and hands them straight to the viewer. Nothing is transmitted anywhere. That matters if you're reading on a work laptop with restricted network access, on a shared or public computer, or if you simply don't want a comic collection uploaded to a stranger's server just to flip through a few pages.</p>
+        <p>We built it feature-first rather than app-first. That means the reading experience, page navigation, thumbnails, fit modes, keyboard shortcuts, and dark mode, was designed before anything else, and everything unnecessary was left out. There's no account system, no ads blocking the page, and no bloated framework slowing down load times. The result is a page that opens fast on a five-year-old laptop and just as fast on a mid-range Android phone.</p>
+        <p>CBZ Reader Online is meant to answer the same question people search for constantly: "what is the best cbz reader?" Our answer is that the best reader is the one that opens instantly, works on whatever device you already own, Windows, Mac, Linux, Chrome, or Android, and never gets in the way of the actual reading. Whether you're catching up on a webcomic archive, revisiting an old manga scanlation, or organizing a personal digital comic library, this tool is meant to be the fastest path from file to first page.</p>
+        <div class="stat-row">
+          <div class="stat"><b>0s</b><span>UPLOAD WAIT TIME</span></div>
+          <div class="stat"><b>2</b><span>FORMATS: CBZ / CBR</span></div>
+          <div class="stat"><b>100%</b><span>CLIENT-SIDE PROCESSING</span></div>
+        </div>
+      </div>
+      <div class="panel reveal">
+        <div class="halftone"></div>
+        <div style="position:relative;z-index:2;">
+          <h3 style="margin-bottom:14px;">Why people switch to it</h3>
+          <ul style="margin:0;padding-left:18px;color:var(--ink-soft);line-height:2;font-weight:600;font-size:14.5px;">
+            <li>Nothing to install or update</li>
+            <li>Works offline once the page is cached</li>
+            <li>Handles large scans without freezing the tab</li>
+            <li>Same shortcuts on desktop, same gestures on mobile</li>
+            <li>Free, with no account or watermark</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Frequently asked</span>
+        <h2>Questions people actually ask.</h2>
+        <p>Everything you'd want to know before opening your first comic here.</p>
+      </div>
+      <div class="faq-list" id="faqList">
+
+        <div class="faq-item reveal">
+          <button class="faq-q">What is the best CBZ reader? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg></button>
+          <div class="faq-a"><p>The best CBZ reader is whichever one opens your file fastest without extra steps. For most people that means a reader with no install, no account, and no upload delay, which is exactly what this page is built to be. It extracts pages locally, remembers your last theme, and gives you the same navigation whether you're on a laptop or a phone. Dedicated desktop apps can offer more advanced library management, but for quickly opening and reading a file, an online reader wins on speed and convenience.</p></div>
+        </div>
+
+        <div class="faq-item reveal">
+          <button class="faq-q">What is a CBZ file? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg></button>
+          <div class="faq-a"><p>A CBZ file is a ZIP archive containing a sequence of image files, usually JPG or PNG, named so they sort in reading order. It's a packaging format used for digital comics and manga. Any tool that can open a ZIP file can technically open a CBZ, but a proper reader adds page navigation, zoom, and view modes on top.</p></div>
+        </div>
+
+        <div class="faq-item reveal">
+          <button class="faq-q">How is CBZ different from CBR? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg></button>
+          <div class="faq-a"><p>Both formats store the same thing, a folder of comic page images, but they use different compression. CBZ wraps the pages in a ZIP archive, while CBR wraps them in a RAR archive. RAR compression can be slightly smaller for some files, but ZIP is an open, license-free format, which is why CBZ is more common for freely shared and self-published comics.</p></div>
+        </div>
+
+        <div class="faq-item reveal">
+          <button class="faq-q">Do I need to install anything to use this CBZ reader online? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg></button>
+          <div class="faq-a"><p>No. This is a browser-based reader, so there's nothing to download, install, or keep updated. Open the page, drop in your file, and start reading. It works the same way whether you're on a desktop browser or a mobile one.</p></div>
+        </div>
+
+        <div class="faq-item reveal">
+          <button class="faq-q">Is my comic file uploaded to a server? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg></button>
+          <div class="faq-a"><p>No. The file is read and unpacked directly inside your browser tab using client-side JavaScript. It is never sent over the network, which means it also works fine on restricted networks and keeps private collections private.</p></div>
+        </div>
+
+        <div class="faq-item reveal">
+          <button class="faq-q">Does this work as a CBZ reader for Windows? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg></button>
+          <div class="faq-a"><p>Yes. Since it runs in any modern browser, it works the same on Windows 10 and Windows 11 as it does anywhere else. There's no separate Windows installer to download, just open this page in Chrome, Edge, or Firefox.</p></div>
+        </div>
+
+        <div class="faq-item reveal">
+          <button class="faq-q">Is there a CBZ reader for Linux? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg></button>
+          <div class="faq-a"><p>Yes, because this reader is just a webpage, it works identically on any Linux distribution with a modern browser installed, without needing distro-specific packages, dependencies, or a terminal command.</p></div>
+        </div>
+
+        <div class="faq-item reveal">
+          <button class="faq-q">Can I use this as a CBZ reader on Mac? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg></button>
+          <div class="faq-a"><p>Yes. It runs in Safari, Chrome, or any other modern macOS browser with no additional software required, so it works as a lightweight alternative to installing a dedicated Mac comic reader app.</p></div>
+        </div>
+
+        <div class="faq-item reveal">
+          <button class="faq-q">Is there a good CBZ reader for Android? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg></button>
+          <div class="faq-a"><p>Yes. This page is designed mobile-first, so opening it in Chrome on Android gives you swipe navigation, a fit-width view suited to phone screens, and no app-store install required to try it out.</p></div>
+        </div>
+
+        <div class="faq-item reveal">
+          <button class="faq-q">Can I read CBR files here too? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg></button>
+          <div class="faq-a"><p>The reader is primarily built around the CBZ/ZIP format, since it's fully supported in-browser without extra licensing. CBR support depends on RAR decompression being available in your browser environment, if a CBR file doesn't open, re-saving it as a CBZ with any archive tool will always work.</p></div>
+        </div>
+
+        <div class="faq-item reveal">
+          <button class="faq-q">Is there a portable CBZ reader I can carry on a USB drive? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg></button>
+          <div class="faq-a"><p>Because this reader is a single self-contained webpage, you can save the page and its assets locally and open the saved copy directly from a USB drive in any browser, no installation process, admin rights, or persistent footprint on the host machine required.</p></div>
+        </div>
+
+        <div class="faq-item reveal">
+          <button class="faq-q">Is the source code open? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg></button>
+          <div class="faq-a"><p>The reader is built with plain, readable HTML, CSS, and JavaScript with no build step or hidden bundling, so anyone can view the source, learn from it, or adapt it for their own project.</p></div>
+        </div>
+
+        <div class="faq-item reveal">
+          <button class="faq-q">Does it support dark mode? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg></button>
+          <div class="faq-a"><p>Yes. Use the toggle in the top-right corner to switch between light and dark themes. Your choice is remembered automatically the next time you open the page.</p></div>
+        </div>
+
+        <div class="faq-item reveal">
+          <button class="faq-q">What keyboard shortcuts are available? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg></button>
+          <div class="faq-a"><p>Use the left and right arrow keys to move between pages, the F key to toggle fullscreen, and click any thumbnail or drag the slider at the bottom of the viewer to jump straight to a specific page.</p></div>
+        </div>
+
+        <div class="faq-item reveal">
+          <button class="faq-q">Why won't my CBZ file open? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg></button>
+          <div class="faq-a"><p>This usually means the archive is corrupted, password-protected, or actually saved as a CBR/RAR file with a .cbz extension. Try re-extracting the archive with a desktop tool and re-zipping the image folder, then load the new file here.</p></div>
+        </div>
+
+        <div class="faq-item reveal">
+          <button class="faq-q">Is there a file size limit? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg></button>
+          <div class="faq-a"><p>There's no hard limit built into the reader, but very large archives with hundreds of high-resolution pages depend on your device's available memory, since everything is processed locally rather than streamed from a server.</p></div>
+        </div>
+
+        <div class="faq-item reveal">
+          <button class="faq-q">Does this cost anything to use? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg></button>
+          <div class="faq-a"><p>No. It's completely free to use, with no account creation, subscription, or hidden watermarking on the pages you read.</p></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- OFFLINE -->
+  <section id="offline">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Read without internet</span>
+        <h2>Use it offline too.</h2>
+        <p>This site can be used completely without an internet connection once you have visited it a single time. Here is how that works and how to set it up.</p>
+      </div>
+      <div class="panel reveal" style="max-width:820px;margin:0 auto;">
+        <div class="halftone"></div>
+        <div style="position:relative;z-index:2;">
+          <ol class="steps">
+            <li>Open this website once while you are connected to the internet. This lets your browser save the app files needed to run it later.</li>
+            <li>On desktop, you can also click the install icon in your browser's address bar, or use the browser menu and choose an option like Install App or Add to Home Screen. On Android in Chrome, use the menu and choose Add to Home Screen. On iPhone in Safari, use the Share button and choose Add to Home Screen.</li>
+            <li>From then on, you can open the app icon or revisit this page even with no internet connection, no Wi-Fi, and no mobile data, and the reader will still load normally.</li>
+            <li>Comic files always open from your local storage or a connected drive, so reading a file offline works exactly the same as reading it online, since your files were never uploaded anywhere in the first place.</li>
+          </ol>
+          <p style="margin-top:6px;font-size:14px;">A quick note: the very first load of any page still needs an internet connection so your browser can download and cache it. After that first visit, this page and its reader keep working offline until you clear your browser's site data.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+
+<footer>
+  <div class="wrap foot-grid">
+    <div class="brand" style="font-size:19px;"><span class="mark" style="width:30px;height:30px;font-size:16px;">Z</span> CBZ Reader Online</div>
+    <div class="foot-links">
+      <a href="/#reader">Reader</a>
+      <a href="/#features">Features</a>
+      <a href="/about.html">About</a>
+      <a href="/#faq">FAQ</a>
+      <a href="/contact.html">Contact</a>
+      <a href="/privacy-policy.html">Privacy Policy</a>
+      <a href="/terms.html">Terms and Conditions</a>
+      <a href="/disclaimer.html">Disclaimer</a>
+    </div>
+  </div>
+  <div class="wrap foot-note" style="margin-top:14px;">CBZ Reader Online runs entirely in your browser. Your comic files are never uploaded anywhere. Once loaded, this site also works offline. See the offline guide on the homepage for details.</div>
+</footer>
+<script>
+(function(){
+  "use strict";
+  var root = document.documentElement;
+  var themeBtn = document.getElementById('themeToggle');
+  var sunIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>';
+  var moonIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 12.5A9 9 0 1111.5 3a7 7 0 009.5 9.5z"/></svg>';
+  function applyTheme(t){
+    root.setAttribute('data-theme', t);
+    if(themeBtn) themeBtn.innerHTML = t === 'dark' ? sunIcon : moonIcon;
+    try{ localStorage.setItem('cbzr-theme', t); }catch(e){}
+  }
+  var saved = null;
+  try{ saved = localStorage.getItem('cbzr-theme'); }catch(e){}
+  if(!saved){ saved = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+  applyTheme(saved);
+  if(themeBtn) themeBtn.addEventListener('click', function(){
+    applyTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+
+  var burger = document.getElementById('burgerBtn');
+  var navlinks = document.getElementById('navlinks');
+  if(burger && navlinks){
+    burger.addEventListener('click', function(){ navlinks.classList.toggle('open'); });
+    navlinks.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', function(){ navlinks.classList.remove('open'); }); });
+  }
+
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    },{threshold:0.12});
+    document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+  } else {
+    document.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('in'); });
+  }
+
+  if('serviceWorker' in navigator){
+    window.addEventListener('load', function(){
+      navigator.serviceWorker.register('/sw.js').catch(function(){});
+    });
+  }
+})();
+</script>
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- CBZ Reader logic ---------------- */
+  const stage = document.getElementById('stage');
+  const emptyState = document.getElementById('emptyState');
+  const pageImg = document.getElementById('pageImg');
+  const fnameEl = document.getElementById('fname');
+  const pageSlider = document.getElementById('pageSlider');
+  const pageCountEl = document.getElementById('pageCount');
+  const thumbstrip = document.getElementById('thumbstrip');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const scrubPrev = document.getElementById('scrubPrev');
+  const scrubNext = document.getElementById('scrubNext');
+  const fitWidthBtn = document.getElementById('fitWidthBtn');
+  const fitHeightBtn = document.getElementById('fitHeightBtn');
+  const spreadBtn = document.getElementById('spreadBtn');
+  const fullscreenBtn = document.getElementById('fullscreenBtn');
+  const openBtn = document.getElementById('openBtn');
+  const mainFileInput = document.getElementById('mainFileInput');
+  const heroDropzone = document.getElementById('heroDropzone');
+  const heroFileInput = document.getElementById('heroFileInput');
+  const viewerShell = document.querySelector('.viewer-shell');
+  const toastEl = document.getElementById('toast');
+
+  let pages = [];
+  let current = 0;
+  let spreadMode = false;
+  let currentFileName = '';
+  let toastTimer;
+
+  function toast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toastEl.classList.remove('show'); }, 2600);
+  }
+
+  function naturalSort(a,b){
+    return a.localeCompare(b, undefined, {numeric:true, sensitivity:'base'});
+  }
+
+  function saveProgress(){
+    try{
+      localStorage.setItem('cbzr-last-file', JSON.stringify({name: currentFileName, page: current}));
+    }catch(e){}
+  }
+
+  async function loadCbz(file){
+    if(!file) return;
+    const lower = file.name.toLowerCase();
+    if(!lower.endsWith('.cbz') && !lower.endsWith('.zip')){
+      if(lower.endsWith('.cbr') || lower.endsWith('.rar')){
+        toast("CBR and RAR files are not supported in-browser yet. Please use a .cbz file instead.");
+        return;
+      }
+      toast('Please choose a .cbz (zip) comic archive.');
+      return;
+    }
+    toast('Opening ' + file.name);
+    try{
+      const buf = await file.arrayBuffer();
+      const zip = await JSZip.loadAsync(buf);
+      const imgExt = /\.(jpe?g|png|gif|webp|bmp)$/i;
+      const entries = Object.values(zip.files)
+        .filter(function(f){ return !f.dir && imgExt.test(f.name); })
+        .sort(function(a,b){ return naturalSort(a.name,b.name); });
+
+      if(entries.length === 0){
+        toast('No image pages found in that archive.');
+        return;
+      }
+
+      pages.forEach(function(u){ URL.revokeObjectURL(u); });
+      pages = [];
+      thumbstrip.innerHTML = '';
+
+      for(const entry of entries){
+        const blob = await entry.async('blob');
+        const url = URL.createObjectURL(blob);
+        pages.push(url);
+      }
+
+      fnameEl.textContent = file.name;
+      currentFileName = file.name;
+      current = 0;
+
+      try{
+        const saved = JSON.parse(localStorage.getItem('cbzr-last-file') || 'null');
+        if(saved && saved.name === file.name && saved.page < pages.length){
+          current = saved.page;
+        }
+      }catch(e){}
+
+      pageSlider.min = 0;
+      pageSlider.max = pages.length - 1;
+      pageSlider.disabled = false;
+      buildThumbs();
+      renderPage();
+      toast('Loaded ' + pages.length + ' pages');
+      viewerShell.scrollIntoView({behavior:'smooth', block:'center'});
+    }catch(err){
+      console.error(err);
+      toast('Could not read that archive. Is it a valid CBZ file?');
+    }
+  }
+
+  function buildThumbs(){
+    thumbstrip.innerHTML = '';
+    pages.forEach(function(url, i){
+      const im = document.createElement('img');
+      im.src = url;
+      im.loading = 'lazy';
+      im.addEventListener('click', function(){ current = i; renderPage(); });
+      thumbstrip.appendChild(im);
+    });
+  }
+
+  function renderPage(){
+    if(pages.length === 0) return;
+    emptyState.style.display = 'none';
+    pageImg.style.display = 'block';
+
+    if(spreadMode && current + 1 < pages.length){
+      pageImg.src = pages[current];
+      pageImg.dataset.spread = pages[current+1];
+    } else {
+      pageImg.src = pages[current];
+      pageImg.removeAttribute('data-spread');
+    }
+
+    pageSlider.value = current;
+    pageCountEl.textContent = (current+1) + ' / ' + pages.length;
+    [...thumbstrip.children].forEach(function(t,i){ t.classList.toggle('active', i===current); });
+    const active = thumbstrip.children[current];
+    if(active) active.scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'});
+    saveProgress();
+  }
+
+  function goto(delta){
+    if(pages.length === 0) return;
+    const step = spreadMode ? delta*2 : delta;
+    current = Math.min(Math.max(current + step, 0), pages.length - 1);
+    renderPage();
+  }
+
+  prevBtn.addEventListener('click', function(){ goto(-1); });
+  nextBtn.addEventListener('click', function(){ goto(1); });
+  scrubPrev.addEventListener('click', function(){ goto(-1); });
+  scrubNext.addEventListener('click', function(){ goto(1); });
+  pageSlider.addEventListener('input', function(e){ current = parseInt(e.target.value,10); renderPage(); });
+
+  fitWidthBtn.addEventListener('click', function(){
+    pageImg.style.maxHeight = 'none';
+    pageImg.style.maxWidth = '100%';
+    fitWidthBtn.classList.add('active');
+    fitHeightBtn.classList.remove('active');
+  });
+  fitHeightBtn.addEventListener('click', function(){
+    pageImg.style.maxHeight = '70vh';
+    pageImg.style.maxWidth = '100%';
+    fitHeightBtn.classList.add('active');
+    fitWidthBtn.classList.remove('active');
+  });
+  spreadBtn.addEventListener('click', function(){
+    spreadMode = !spreadMode;
+    spreadBtn.classList.toggle('active', spreadMode);
+    toast(spreadMode ? 'Two page spread on' : 'Two page spread off');
+    renderPage();
+  });
+  fullscreenBtn.addEventListener('click', function(){
+    if(!document.fullscreenElement){
+      viewerShell.requestFullscreen().catch(function(){ toast('Fullscreen not available here'); });
+    } else {
+      document.exitFullscreen();
+    }
+  });
+
+  openBtn.addEventListener('click', function(){ mainFileInput.click(); });
+  mainFileInput.addEventListener('change', function(e){ loadCbz(e.target.files[0]); });
+  heroFileInput.addEventListener('change', function(e){ loadCbz(e.target.files[0]); });
+  heroDropzone.addEventListener('click', function(){ heroFileInput.click(); });
+
+  [heroDropzone, stage].forEach(function(zone){
+    zone.addEventListener('dragover', function(e){ e.preventDefault(); zone.classList.add('drag'); });
+    zone.addEventListener('dragleave', function(){ zone.classList.remove('drag'); });
+    zone.addEventListener('drop', function(e){
+      e.preventDefault();
+      zone.classList.remove('drag');
+      if(e.dataTransfer.files && e.dataTransfer.files[0]) loadCbz(e.dataTransfer.files[0]);
+    });
+  });
+
+  document.addEventListener('keydown', function(e){
+    if(pages.length === 0) return;
+    if(e.key === 'ArrowRight') goto(1);
+    if(e.key === 'ArrowLeft') goto(-1);
+    if(e.key === 'f' || e.key === 'F') fullscreenBtn.click();
+  });
+
+  let touchX = null;
+  stage.addEventListener('touchstart', function(e){ touchX = e.touches[0].clientX; }, {passive:true});
+  stage.addEventListener('touchend', function(e){
+    if(touchX === null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    if(Math.abs(dx) > 50){ dx < 0 ? goto(1) : goto(-1); }
+    touchX = null;
+  }, {passive:true});
+
+  /* FAQ accordion (index only, has FAQ section) */
+  document.querySelectorAll('.faq-item').forEach(function(item){
+    const q = item.querySelector('.faq-q');
+    const a = item.querySelector('.faq-a');
+    q.addEventListener('click', function(){
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(function(o){
+        o.classList.remove('open');
+        o.querySelector('.faq-a').style.maxHeight = null;
+      });
+      if(!isOpen){
+        item.classList.add('open');
+        a.style.maxHeight = a.scrollHeight + 'px';
+      }
+    });
+  });
+})();
+</script>
+</body>
+</html>
